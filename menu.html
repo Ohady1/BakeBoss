@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu — Bake Boss</title>
+    <link rel="icon" type="image/jpeg" href="brand_assets/BakeBossLogo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        boss: {
+                            green: '#2D5016',
+                            sage: '#3A6B35',
+                            leaf: '#4A7C48',
+                            mint: '#6B9B68',
+                            cream: '#FDFAF6',
+                            warm: '#F5F0E8',
+                            latte: '#E8DFD3',
+                            dark: '#1A1A1A',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Cormorant Garamond', 'serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: #FDFAF6; color: #1A1A1A; }
+
+        .category-btn.active {
+            background: #2D5016;
+            color: #FDFAF6;
+            border-color: #2D5016;
+        }
+        .category-btn {
+            transition: all 0.2s ease;
+        }
+        .category-btn:hover:not(.active) {
+            background: rgba(45, 80, 22, 0.08);
+            border-color: rgba(45, 80, 22, 0.3);
+        }
+
+        .menu-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(45, 80, 22, 0.08);
+        }
+
+        .cart-badge {
+            animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .cart-panel {
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cart-panel.open {
+            transform: translateX(0);
+        }
+
+        .overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeUp 0.4s ease forwards;
+        }
+
+        .qty-btn {
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+        .qty-btn:hover { background: #2D5016; color: #FDFAF6; }
+        .qty-btn:active { transform: scale(0.9); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3A6B35; border-radius: 3px; }
+
+        .toast {
+            transform: translateY(0);
+            opacity: 1;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .toast-hidden {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+
+        .add-btn-flash {
+            animation: flash 0.3s ease;
+        }
+        @keyframes flash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); background: #2D5016; color: #FDFAF6; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-boss-cream/90 border-b border-boss-green/5">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full overflow-hidden bg-boss-green">
+                    <img src="brand_assets/BakeBossLogo.jpg" alt="Bake Boss" class="w-full h-full object-cover">
+                </div>
+                <span class="font-display text-xl font-semibold text-boss-green hidden sm:inline">Bake Boss</span>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-xs mx-4">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-boss-dark/30" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search menu..." class="w-full pl-9 pr-4 py-2.5 rounded-full border border-boss-green/10 bg-white/80 text-sm focus:border-boss-green focus:outline-none transition-colors text-boss-dark placeholder:text-boss-dark/30">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="text-sm text-boss-dark/60 hover:text-boss-green transition-colors hidden sm:inline">Home</a>
+                <button id="cartToggle" class="relative flex items-center gap-2 px-4 py-2.5 rounded-full bg-boss-green text-boss-cream text-sm font-medium hover:bg-boss-sage transition-colors">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span class="hidden sm:inline">Cart</span>
+                    <span id="cartCount" class="hidden w-5 h-5 rounded-full bg-red-500 text-white text-xs items-center justify-center font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Filter -->
+    <div class="sticky top-[73px] z-30 bg-boss-cream/95 backdrop-blur-sm border-b border-boss-green/5 py-3 overflow-x-auto">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 flex gap-2 min-w-max">
+            <button class="category-btn active px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="all">All</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="bakery">Bakery</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="breakfast">Breakfast</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="sandwiches">Sandwiches</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="pizza">Pizza</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="salads">Salads</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="desserts">Desserts</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="coffee">Coffee</button>
+            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="beverages">Beverages</button>
+        </div>
+    </div>
+
+    <!-- Menu Content -->
+    <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-24">
+        <p id="noResults" class="hidden text-center text-boss-dark/40 py-12">No items found</p>
+        <div id="menuContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+    </main>
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="overlay fixed inset-0 bg-black/40 z-50"></div>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel fixed top-0 right-0 h-full w-full max-w-md bg-boss-cream z-50 shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-boss-green/10 flex items-center justify-between">
+            <h2 class="font-display text-2xl font-semibold text-boss-dark">Your Order</h2>
+            <button id="closeCartBtn" class="w-9 h-9 rounded-full border border-boss-green/10 flex items-center justify-center hover:bg-boss-green/5 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div id="cartScrollArea" class="flex-1 overflow-y-auto p-6">
+            <p id="emptyCart" class="text-center text-boss-dark/40 py-16">Your cart is empty</p>
+            <div id="cartItems"></div>
+        </div>
+
+        <!-- Cart Footer -->
+        <div id="cartFooter" class="hidden border-t border-boss-green/10 p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <span class="text-boss-dark/60">Total</span>
+                <span id="cartTotal" class="font-display text-2xl font-semibold text-boss-green">0 EGP</span>
+            </div>
+            <button id="checkoutBtn" class="w-full py-4 rounded-full bg-boss-green text-boss-cream font-medium text-lg hover:bg-boss-sage transition-colors active:scale-[0.98]" style="transition: transform 0.2s ease, background 0.2s ease;">
+                Checkout
+            </button>
+        </div>
+
+        <!-- Checkout Form -->
+        <div id="checkoutForm" class="hidden border-t border-boss-green/10 p-6 space-y-4 overflow-y-auto">
+            <h3 class="font-display text-xl font-semibold text-boss-dark">Complete Your Order</h3>
+            <div>
+                <label class="text-sm text-boss-dark/60 mb-1 block">Your Name</label>
+                <input type="text" id="custName" placeholder="e.g. Ahmed" class="w-full px-4 py-3 rounded-xl border border-boss-green/10 bg-white focus:border-boss-green focus:outline-none transition-colors text-boss-dark">
+            </div>
+            <div>
+                <label class="text-sm text-boss-dark/60 mb-1 block">Phone Number (Egyptian)</label>
+                <div class="flex items-center gap-2">
+                    <span class="text-boss-dark/50 text-sm font-medium">+20</span>
+                    <input type="tel" id="custPhone" placeholder="1X XXXX XXXX" maxlength="11" class="flex-1 px-4 py-3 rounded-xl border border-boss-green/10 bg-white focus:border-boss-green focus:outline-none transition-colors text-boss-dark">
+                </div>
+            </div>
+            <div>
+                <label class="text-sm text-boss-dark/60 mb-1 block">Notes (optional)</label>
+                <textarea id="custNotes" rows="2" placeholder="Any special requests..." class="w-full px-4 py-3 rounded-xl border border-boss-green/10 bg-white focus:border-boss-green focus:outline-none transition-colors text-boss-dark resize-none"></textarea>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+                <span class="text-boss-dark/60">Total:</span>
+                <span id="checkoutTotal" class="font-display text-xl font-semibold text-boss-green">0 EGP</span>
+            </div>
+            <button id="submitBtn" class="w-full py-4 rounded-full bg-boss-green text-boss-cream font-medium text-lg hover:bg-boss-sage transition-colors active:scale-[0.98]" style="transition: transform 0.2s ease, background 0.2s ease;">
+                Place Order
+            </button>
+            <button id="backToCartBtn" class="w-full py-3 rounded-full border border-boss-green/10 text-boss-dark/60 text-sm hover:bg-boss-green/5 transition-colors">
+                Back to Cart
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl bg-boss-green text-boss-cream font-medium shadow-xl shadow-boss-green/20 toast-hidden pointer-events-none"></div>
+
+    <script>
+    const MENU_DATA = [
+        { id: 0, name: "Flat Plain Croissant", price: 70, category: "bakery" },
+        { id: 1, name: "Plain Croissant", price: 70, category: "bakery" },
+        { id: 2, name: "Kiri Cheese Croissant", price: 95, category: "bakery" },
+        { id: 3, name: "Pastrami Croissant", price: 95, category: "bakery" },
+        { id: 4, name: "Almond Croissant", price: 110, category: "bakery" },
+        { id: 5, name: "Pistachio Croissant", price: 110, category: "bakery" },
+        { id: 6, name: "Chocolate Croissant", price: 110, category: "bakery" },
+        { id: 7, name: "Konafa Pistachio Croissant", price: 120, category: "bakery" },
+        { id: 8, name: "Hotdog Pate", price: 95, category: "bakery" },
+        { id: 9, name: "Kiri & Basterma Pate", price: 95, category: "bakery" },
+        { id: 10, name: "Labneh & Oregano Pate", price: 95, category: "bakery" },
+        { id: 11, name: "Hotdog Flat Bread", price: 75, category: "bakery" },
+        { id: 12, name: "Chicken Ranch Flat Bread", price: 75, category: "bakery" },
+        { id: 13, name: "Chocolate Doughnut", price: 80, category: "bakery" },
+        { id: 14, name: "Strawberry Doughnut", price: 80, category: "bakery" },
+        { id: 15, name: "Feteer Meshaltet", price: 500, category: "bakery" },
+        { id: 16, name: "Extra Eshta", price: 100, category: "bakery" },
+
+        { id: 17, name: "Classic Omelette", price: 225, category: "breakfast" },
+        { id: 18, name: "Familia Mushroom Omelette", price: 250, category: "breakfast" },
+        { id: 19, name: "Mixed Cheese Omelette", price: 250, category: "breakfast" },
+        { id: 20, name: "Beef Bacon Omelette", price: 275, category: "breakfast" },
+        { id: 21, name: "Classic Scrambled", price: 225, category: "breakfast" },
+        { id: 22, name: "Pastrami Scrambled", price: 250, category: "breakfast" },
+        { id: 23, name: "Croissant With Guacamole", price: 250, category: "breakfast" },
+        { id: 24, name: "Caprese & Creamy Cheese Benedict", price: 300, category: "breakfast" },
+        { id: 25, name: "Salmon With Lemon Hollandaise", price: 375, category: "breakfast" },
+        { id: 26, name: "Caprese Sourdough", price: 225, category: "breakfast" },
+        { id: 27, name: "Goakamoli & Cheese Sourdough", price: 225, category: "breakfast" },
+        { id: 28, name: "Mascarpone Olives Sourdough", price: 225, category: "breakfast" },
+        { id: 29, name: "Salmon Gravlax Sourdough", price: 300, category: "breakfast" },
+
+        { id: 30, name: "Cheese With Sun-dried Tomato", price: 110, category: "sandwiches" },
+        { id: 31, name: "Tuna Sandwich", price: 160, category: "sandwiches" },
+        { id: 32, name: "Turkey Sandwich", price: 180, category: "sandwiches" },
+        { id: 33, name: "Roast Beef Sandwich", price: 180, category: "sandwiches" },
+        { id: 34, name: "Salmon Sandwich", price: 225, category: "sandwiches" },
+        { id: 35, name: "Halloumi Focaccia", price: 180, category: "sandwiches" },
+        { id: 36, name: "Chicken Focaccia", price: 180, category: "sandwiches" },
+        { id: 37, name: "Roast Beef Focaccia", price: 180, category: "sandwiches" },
+
+        { id: 38, name: "Margarita Pizza", price: 250, category: "pizza" },
+        { id: 39, name: "Salami Pizza", price: 275, category: "pizza" },
+        { id: 40, name: "Pesto Pizza", price: 275, category: "pizza" },
+        { id: 41, name: "Quattro Formaggi Pizza", price: 275, category: "pizza" },
+        { id: 42, name: "Bresaola Pizza", price: 350, category: "pizza" },
+        { id: 43, name: "Truffle Mushroom Pizza", price: 350, category: "pizza" },
+
+        { id: 44, name: "Strawberry & Spinach Salad", price: 225, category: "salads" },
+        { id: 45, name: "Quinoa Tabbouleh", price: 225, category: "salads" },
+        { id: 46, name: "Chicken Caesar Salad", price: 225, category: "salads" },
+        { id: 47, name: "Buffalo Greens Salad", price: 250, category: "salads" },
+        { id: 48, name: "Bresaola Salad", price: 250, category: "salads" },
+
+        { id: 49, name: "Brownies", price: 90, category: "desserts" },
+        { id: 50, name: "Lemon Cake", price: 75, category: "desserts" },
+        { id: 51, name: "Honey Cake", price: 110, category: "desserts" },
+        { id: 52, name: "Strawberry Cake", price: 110, category: "desserts" },
+        { id: 53, name: "Red Velvet Cake", price: 110, category: "desserts" },
+        { id: 54, name: "Chocolate Raspberry Cake", price: 110, category: "desserts" },
+        { id: 55, name: "Plain Cheese Cake", price: 110, category: "desserts" },
+        { id: 56, name: "Tres Leches — Piece", price: 125, category: "desserts" },
+        { id: 57, name: "Tres Leches — Box", price: 750, category: "desserts" },
+        { id: 58, name: "Classic Pancake", price: 225, category: "desserts" },
+        { id: 59, name: "Caramel Pecan Pancake", price: 275, category: "desserts" },
+        { id: 60, name: "Kunafa Pistachio Pancake", price: 275, category: "desserts" },
+        { id: 61, name: "Caramel Eclair", price: 80, category: "desserts" },
+        { id: 62, name: "Chocolate Eclair", price: 95, category: "desserts" },
+        { id: 63, name: "Almond Eclair", price: 110, category: "desserts" },
+        { id: 64, name: "Dates Tart", price: 95, category: "desserts" },
+        { id: 65, name: "Seasonal Tart", price: 95, category: "desserts" },
+        { id: 66, name: "Pastry Cream & Mix Berries Tart", price: 120, category: "desserts" },
+        { id: 67, name: "Croissmisu", price: 150, category: "desserts" },
+
+        { id: 68, name: "Turkish Coffee Single", price: 60, category: "coffee" },
+        { id: 69, name: "Turkish Coffee Double", price: 75, category: "coffee" },
+        { id: 70, name: "Espresso Single", price: 60, category: "coffee" },
+        { id: 71, name: "Espresso Double", price: 75, category: "coffee" },
+        { id: 72, name: "American Coffee", price: 90, category: "coffee" },
+        { id: 73, name: "Macchiato", price: 75, category: "coffee" },
+        { id: 74, name: "Double Macchiato", price: 90, category: "coffee" },
+        { id: 75, name: "Latte", price: 100, category: "coffee" },
+        { id: 76, name: "Hot Spanish Latte", price: 110, category: "coffee" },
+        { id: 77, name: "Cappuccino", price: 110, category: "coffee" },
+        { id: 78, name: "Flat White", price: 110, category: "coffee" },
+        { id: 79, name: "Mocha", price: 110, category: "coffee" },
+        { id: 80, name: "White Mocha", price: 120, category: "coffee" },
+        { id: 81, name: "Iced Americano", price: 90, category: "coffee" },
+        { id: 82, name: "Iced Latte", price: 115, category: "coffee" },
+        { id: 83, name: "Iced Spanish Latte", price: 125, category: "coffee" },
+        { id: 84, name: "Latte Frappe", price: 125, category: "coffee" },
+        { id: 85, name: "Vanilla Frappe", price: 130, category: "coffee" },
+        { id: 86, name: "Mocha Frappe", price: 130, category: "coffee" },
+        { id: 87, name: "Caramel Frappe", price: 130, category: "coffee" },
+        { id: 88, name: "Hazelnut Frappe", price: 130, category: "coffee" },
+        { id: 89, name: "Salted Caramel Frappe", price: 130, category: "coffee" },
+
+        { id: 90, name: "Anise", price: 50, category: "beverages" },
+        { id: 91, name: "Tea", price: 50, category: "beverages" },
+        { id: 92, name: "Green Tea", price: 50, category: "beverages" },
+        { id: 93, name: "Hot Apple Cider", price: 110, category: "beverages" },
+        { id: 94, name: "Hot Chocolate", price: 110, category: "beverages" },
+        { id: 95, name: "Pina Colada", price: 125, category: "beverages" },
+        { id: 96, name: "Iced Chocolate", price: 125, category: "beverages" },
+        { id: 97, name: "Mojito — Classic", price: 125, category: "beverages" },
+        { id: 98, name: "Mojito — Mix Berry", price: 130, category: "beverages" },
+        { id: 99, name: "Mojito — Passion Fruit", price: 130, category: "beverages" },
+        { id: 100, name: "Mango Juice", price: 90, category: "beverages" },
+        { id: 101, name: "Orange Juice", price: 90, category: "beverages" },
+        { id: 102, name: "Guava Juice", price: 90, category: "beverages" },
+        { id: 103, name: "Lemon Mint Juice", price: 90, category: "beverages" },
+    ];
+
+    let cart = [];
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let toastTimeout = null;
+
+    // Use ID-based lookup instead of string matching
+    function getItemById(id) {
+        return MENU_DATA.find(item => item.id === id);
+    }
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function getFilteredItems() {
+        let items = activeCategory === 'all' ? MENU_DATA : MENU_DATA.filter(i => i.category === activeCategory);
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            items = items.filter(i => i.name.toLowerCase().includes(q));
+        }
+        return items;
+    }
+
+    function renderMenu() {
+        const container = document.getElementById('menuContainer');
+        const noResults = document.getElementById('noResults');
+        const items = getFilteredItems();
+
+        if (items.length === 0) {
+            container.innerHTML = '';
+            noResults.classList.remove('hidden');
+            return;
+        }
+        noResults.classList.add('hidden');
+
+        container.innerHTML = items.map((item, idx) => `
+            <div class="menu-item bg-white rounded-2xl border border-boss-green/5 p-4 flex items-center justify-between gap-3 animate-in" style="animation-delay: ${Math.min(idx * 20, 200)}ms">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-medium text-boss-dark text-sm truncate">${escapeHtml(item.name)}</h3>
+                    <span class="text-boss-green font-semibold text-sm">${item.price} EGP</span>
+                </div>
+                <button data-add-id="${item.id}" class="add-btn shrink-0 w-9 h-9 rounded-full border-2 border-boss-green/20 flex items-center justify-center text-boss-green hover:bg-boss-green hover:text-boss-cream hover:border-boss-green transition-all duration-200 active:scale-90">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function addToCart(id) {
+        const item = getItemById(id);
+        if (!item) return;
+        const existing = cart.find(i => i.id === id);
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ id: item.id, name: item.name, price: item.price, qty: 1 });
+        }
+        updateCartUI();
+        showToast(item.name + ' added');
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(i => i.id !== id);
+        updateCartUI();
+    }
+
+    function updateQty(id, delta) {
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+        item.qty += delta;
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id !== id);
+        }
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const countEl = document.getElementById('cartCount');
+        const itemsEl = document.getElementById('cartItems');
+        const emptyEl = document.getElementById('emptyCart');
+        const footerEl = document.getElementById('cartFooter');
+        const totalEl = document.getElementById('cartTotal');
+        const checkoutTotalEl = document.getElementById('checkoutTotal');
+
+        const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+        const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+        if (totalItems > 0) {
+            countEl.style.display = 'flex';
+            countEl.textContent = totalItems;
+            emptyEl.style.display = 'none';
+            itemsEl.style.display = '';
+            footerEl.classList.remove('hidden');
+        } else {
+            countEl.style.display = 'none';
+            emptyEl.style.display = '';
+            itemsEl.style.display = 'none';
+            itemsEl.innerHTML = '';
+            footerEl.classList.add('hidden');
+        }
+
+        totalEl.textContent = totalPrice + ' EGP';
+        checkoutTotalEl.textContent = totalPrice + ' EGP';
+
+        if (cart.length > 0) {
+            itemsEl.innerHTML = cart.map(item => `
+                <div class="flex items-center gap-3 py-3 border-b border-boss-green/5 last:border-0">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-boss-dark truncate">${escapeHtml(item.name)}</p>
+                        <p class="text-xs text-boss-dark/50">${item.price} EGP each</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button data-qty-id="${item.id}" data-delta="-1" class="qty-btn w-7 h-7 rounded-full border border-boss-green/20 flex items-center justify-center text-boss-green text-sm font-bold">−</button>
+                        <span class="w-6 text-center text-sm font-semibold text-boss-dark">${item.qty}</span>
+                        <button data-qty-id="${item.id}" data-delta="1" class="qty-btn w-7 h-7 rounded-full border border-boss-green/20 flex items-center justify-center text-boss-green text-sm font-bold">+</button>
+                    </div>
+                    <button data-remove-id="${item.id}" class="text-red-400 hover:text-red-600 transition-colors ml-1">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+    }
+
+    function openCart() {
+        document.getElementById('cartPanel').classList.add('open');
+        document.getElementById('cartOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCart() {
+        document.getElementById('cartPanel').classList.remove('open');
+        document.getElementById('cartOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+        hideCheckout();
+    }
+
+    function showCheckout() {
+        document.getElementById('cartFooter').classList.add('hidden');
+        document.getElementById('cartScrollArea').style.display = 'none';
+        document.getElementById('checkoutForm').classList.remove('hidden');
+    }
+
+    function hideCheckout() {
+        document.getElementById('cartFooter').classList.remove('hidden');
+        document.getElementById('cartScrollArea').style.display = '';
+        document.getElementById('checkoutForm').classList.add('hidden');
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+            toastTimeout = null;
+        }
+        toast.textContent = msg;
+        toast.classList.remove('toast-hidden');
+        toast.classList.add('toast');
+        toastTimeout = setTimeout(() => {
+            toast.classList.add('toast-hidden');
+            toast.classList.remove('toast');
+            toastTimeout = null;
+        }, 2000);
+    }
+
+    async function submitOrder() {
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const notes = document.getElementById('custNotes').value.trim();
+
+        if (!name) { showToast('Please enter your name'); return; }
+        if (!phone || phone.length < 10) { showToast('Please enter a valid phone number'); return; }
+
+        const btn = document.getElementById('submitBtn');
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+
+        const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const orderItems = cart.map(i => i.qty + 'x ' + i.name + ' — ' + (i.price * i.qty) + ' EGP').join('\n');
+
+        const orderText = 'NEW ORDER — Bake Boss\n\nCustomer: ' + name + '\nPhone: +20' + phone + (notes ? '\nNotes: ' + notes : '') + '\n\n--- ITEMS ---\n' + orderItems + '\n\n--- TOTAL: ' + totalPrice + ' EGP ---';
+
+        // Send via mailto (reliable fallback)
+        const subject = encodeURIComponent('New Order from ' + name + ' — Bake Boss');
+        const body = encodeURIComponent(orderText);
+        window.open('mailto:ohady3355@gmail.com?subject=' + subject + '&body=' + body, '_blank');
+        showToast('Order sent!');
+        cart = [];
+        updateCartUI();
+        closeCart();
+
+        btn.textContent = 'Place Order';
+        btn.disabled = false;
+    }
+
+    // --- EVENT DELEGATION ---
+
+    // Menu add buttons (delegation on container)
+    document.getElementById('menuContainer').addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-add-id]');
+        if (!btn) return;
+        const id = parseInt(btn.dataset.addId);
+        addToCart(id);
+        btn.classList.remove('add-btn-flash');
+        void btn.offsetWidth; // force reflow
+        btn.classList.add('add-btn-flash');
+    });
+
+    // Cart panel delegation
+    document.getElementById('cartPanel').addEventListener('click', function(e) {
+        const qtyBtn = e.target.closest('[data-qty-id]');
+        if (qtyBtn) {
+            const id = parseInt(qtyBtn.dataset.qtyId);
+            const delta = parseInt(qtyBtn.dataset.delta);
+            updateQty(id, delta);
+            return;
+        }
+        const removeBtn = e.target.closest('[data-remove-id]');
+        if (removeBtn) {
+            const id = parseInt(removeBtn.dataset.removeId);
+            removeFromCart(id);
+            return;
+        }
+    });
+
+    // Category filter
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeCategory = btn.dataset.category;
+            renderMenu();
+        });
+    });
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        searchQuery = e.target.value.trim();
+        renderMenu();
+    });
+
+    // Cart toggle
+    document.getElementById('cartToggle').addEventListener('click', openCart);
+    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+    document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+    document.getElementById('checkoutBtn').addEventListener('click', showCheckout);
+    document.getElementById('submitBtn').addEventListener('click', submitOrder);
+    document.getElementById('backToCartBtn').addEventListener('click', hideCheckout);
+
+    // Init
+    renderMenu();
+    </script>
+</body>
+</html>

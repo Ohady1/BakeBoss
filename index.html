@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bake Boss — Your Everyday Bakery</title>
+    <link rel="icon" type="image/jpeg" href="brand_assets/BakeBossLogo.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        boss: {
+                            green: '#2D5016',
+                            sage: '#3A6B35',
+                            leaf: '#4A7C48',
+                            mint: '#6B9B68',
+                            cream: '#FDFAF6',
+                            warm: '#F5F0E8',
+                            latte: '#E8DFD3',
+                            dark: '#1A1A1A',
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Cormorant Garamond', 'serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: #FDFAF6; color: #1A1A1A; overflow-x: hidden; }
+
+        /* Grain texture overlay */
+        .grain::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Scroll animation for hero card */
+        .scroll-card {
+            transform: perspective(1000px) rotateX(12deg) scale(0.95);
+            transition: transform 0.1s linear;
+            will-change: transform;
+        }
+        .scroll-card.in-view {
+            transform: perspective(1000px) rotateX(0deg) scale(1);
+        }
+
+        /* Nav styles */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: #2D5016;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-link:hover::after,
+        .nav-link:focus-visible::after {
+            width: 100%;
+        }
+
+        /* Button styles */
+        .btn-primary {
+            background: #2D5016;
+            color: #FDFAF6;
+            padding: 14px 32px;
+            border-radius: 100px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, background 0.3s ease;
+            box-shadow: 0 4px 16px rgba(45, 80, 22, 0.2), 0 2px 4px rgba(45, 80, 22, 0.1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 32px rgba(45, 80, 22, 0.3), 0 4px 8px rgba(45, 80, 22, 0.15);
+            background: #3A6B35;
+        }
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .btn-primary:focus-visible {
+            outline: 2px solid #3A6B35;
+            outline-offset: 3px;
+        }
+
+        .btn-outline {
+            border: 1.5px solid #2D5016;
+            color: #2D5016;
+            padding: 13px 30px;
+            border-radius: 100px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+        }
+        .btn-outline:hover {
+            background: #2D5016;
+            color: #FDFAF6;
+            transform: translateY(-2px);
+        }
+        .btn-outline:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .btn-outline:focus-visible {
+            outline: 2px solid #3A6B35;
+            outline-offset: 3px;
+        }
+
+        /* Stagger animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-up {
+            opacity: 0;
+            animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+        }
+        .animate-scale-in {
+            opacity: 0;
+            animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.35s; }
+        .delay-4 { animation-delay: 0.5s; }
+        .delay-5 { animation-delay: 0.65s; }
+        .delay-6 { animation-delay: 0.8s; }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Menu card hover */
+        .menu-card {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(45, 80, 22, 0.12), 0 8px 24px rgba(45, 80, 22, 0.08);
+        }
+
+        /* Hero image parallax */
+        .hero-visual {
+            box-shadow:
+                0 0 0 1px rgba(45, 80, 22, 0.05),
+                0 20px 60px rgba(45, 80, 22, 0.1),
+                0 40px 80px rgba(0, 0, 0, 0.05),
+                0 80px 120px rgba(45, 80, 22, 0.05);
+        }
+
+        /* Decorative elements */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(45, 80, 22, 0.08);
+            pointer-events: none;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FDFAF6; }
+        ::-webkit-scrollbar-thumb { background: #3A6B35; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2D5016; }
+
+        /* Mobile menu */
+        .mobile-menu {
+            clip-path: circle(0% at calc(100% - 40px) 40px);
+            transition: clip-path 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mobile-menu.open {
+            clip-path: circle(150% at calc(100% - 40px) 40px);
+        }
+    </style>
+</head>
+<body class="grain">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-boss-cream/80 border-b border-boss-green/5">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 animate-fade-up delay-1">
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-boss-green">
+                    <img src="brand_assets/BakeBossLogo.jpg" alt="Bake Boss" class="w-full h-full object-cover">
+                </div>
+                <span class="font-display text-2xl font-semibold text-boss-green tracking-tight">Bake Boss</span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-10 animate-fade-up delay-2">
+                <a href="#home" class="nav-link text-sm font-medium text-boss-dark/70 hover:text-boss-green">Home</a>
+                <a href="#about" class="nav-link text-sm font-medium text-boss-dark/70 hover:text-boss-green">About</a>
+                <a href="#menu" class="nav-link text-sm font-medium text-boss-dark/70 hover:text-boss-green">Menu</a>
+                <a href="#contact" class="nav-link text-sm font-medium text-boss-dark/70 hover:text-boss-green">Contact</a>
+            </div>
+
+            <!-- CTA Buttons -->
+            <div class="hidden md:flex items-center gap-4 animate-fade-up delay-3">
+                <a href="menu.html" class="btn-outline text-sm">View Menu</a>
+                <a href="tel:+201000990001" class="btn-primary text-sm">Order Now</a>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button id="menuToggle" class="md:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5" aria-label="Toggle menu">
+                <span class="w-6 h-0.5 bg-boss-green transition-all duration-300 origin-center" id="bar1"></span>
+                <span class="w-6 h-0.5 bg-boss-green transition-all duration-300" id="bar2"></span>
+                <span class="w-4 h-0.5 bg-boss-green transition-all duration-300 origin-center" id="bar3"></span>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-boss-cream z-40 flex flex-col items-center justify-center gap-8">
+            <a href="#home" class="font-display text-3xl text-boss-green mobile-link">Home</a>
+            <a href="#about" class="font-display text-3xl text-boss-green mobile-link">About</a>
+            <a href="#menu" class="font-display text-3xl text-boss-green mobile-link">Menu</a>
+            <a href="#contact" class="font-display text-3xl text-boss-green mobile-link">Contact</a>
+            <div class="flex gap-4 mt-8">
+                <a href="menu.html" class="btn-outline">View Menu</a>
+                <a href="tel:+201000990001" class="btn-primary">Order Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+        <!-- Background decorations -->
+        <div class="absolute top-20 right-0 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-boss-sage/5 to-transparent blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-boss-mint/5 to-transparent blur-2xl"></div>
+        <div class="deco-circle w-[300px] h-[300px] top-32 right-20 opacity-40"></div>
+        <div class="deco-circle w-[500px] h-[500px] -bottom-40 -left-20 opacity-30"></div>
+
+        <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                <!-- Left: Text Content -->
+                <div class="relative z-10 max-w-xl">
+                    <div class="animate-fade-up delay-2">
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-boss-green/5 border border-boss-green/10 text-boss-sage text-sm font-medium mb-8">
+                            <span class="w-2 h-2 rounded-full bg-boss-sage animate-pulse"></span>
+                            Your Everyday Bakery
+                        </span>
+                    </div>
+
+                    <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-semibold text-boss-dark leading-[0.95] tracking-tight animate-fade-up delay-3">
+                        Freshly<br>
+                        <span class="text-boss-green italic">Baked</span> with<br>
+                        <span class="relative inline-block">
+                            Love
+                            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
+                                <path d="M2 8C40 3 80 2 100 4C140 7 170 5 198 3" stroke="#3A6B35" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+                            </svg>
+                        </span>
+                    </h1>
+
+                    <p class="mt-8 text-boss-dark/60 text-lg leading-relaxed max-w-md font-light animate-fade-up delay-4">
+                        Artisan breads, handcrafted pastries, and specialty coffee — all made fresh daily in the heart of Maadi, Cairo.
+                    </p>
+
+                    <div class="flex flex-wrap items-center gap-4 mt-10 animate-fade-up delay-5">
+                        <a href="#menu" class="btn-primary">Explore Our Menu</a>
+                        <a href="#about" class="btn-outline">Our Story</a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="flex items-center gap-8 mt-14 animate-fade-up delay-6">
+                        <div>
+                            <span class="font-display text-3xl font-semibold text-boss-green">50+</span>
+                            <p class="text-sm text-boss-dark/50 mt-1">Fresh Items Daily</p>
+                        </div>
+                        <div class="w-px h-12 bg-boss-green/10"></div>
+                        <div>
+                            <span class="font-display text-3xl font-semibold text-boss-green">7AM</span>
+                            <p class="text-sm text-boss-dark/50 mt-1">Open Every Morning</p>
+                        </div>
+                        <div class="w-px h-12 bg-boss-green/10"></div>
+                        <div>
+                            <span class="font-display text-3xl font-semibold text-boss-green">5★</span>
+                            <p class="text-sm text-boss-dark/50 mt-1">Customer Love</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Hero Image with Scroll Animation -->
+                <div class="relative flex justify-center lg:justify-end animate-scale-in delay-4">
+                    <div class="scroll-card hero-visual relative rounded-3xl overflow-hidden w-full max-w-lg aspect-[4/5] bg-boss-warm">
+                        <img
+                            src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=800&q=80"
+                            alt="Coffee and pastry at Bake Boss"
+                            class="w-full h-full object-cover"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-boss-green/40 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="backdrop-blur-md bg-white/20 rounded-2xl p-5 border border-white/20">
+                                <p class="font-display text-white text-xl font-medium">The Bakery Lounge</p>
+                                <p class="text-white/80 text-sm mt-1">Maadi, Cairo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scrolling Marquee -->
+    <div class="py-6 bg-boss-green overflow-hidden">
+        <div class="marquee-track flex items-center gap-8 whitespace-nowrap">
+            <span class="font-display text-2xl text-boss-cream/90 italic">Croissants</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Flat White</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Focaccia</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Tres Leches</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Pizza</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Feteer Meshaltet</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Eclairs</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Sourdough</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Croissants</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Flat White</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Focaccia</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Tres Leches</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Pizza</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+            <span class="font-display text-2xl text-boss-cream/90 italic">Feteer Meshaltet</span>
+            <span class="w-2 h-2 rounded-full bg-boss-cream/40"></span>
+        </div>
+    </div>
+    <style>
+        .marquee-track {
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+    </style>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 md:py-32 relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <!-- Image Grid -->
+                <div class="relative reveal">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <div class="rounded-2xl overflow-hidden aspect-[3/4] bg-boss-warm">
+                                <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80" alt="Bakery interior" class="w-full h-full object-cover">
+                            </div>
+                            <div class="rounded-2xl overflow-hidden aspect-square bg-boss-green/10 flex items-center justify-center p-6">
+                                <div class="text-center">
+                                    <span class="font-display text-4xl font-bold text-boss-green">Since</span>
+                                    <p class="font-display text-5xl font-bold text-boss-green mt-1">2023</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4 pt-8">
+                            <div class="rounded-2xl overflow-hidden aspect-square bg-boss-warm">
+                                <img src="https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?w=600&q=80" alt="Fresh pastries" class="w-full h-full object-cover">
+                            </div>
+                            <div class="rounded-2xl overflow-hidden aspect-[3/4] bg-boss-warm">
+                                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80" alt="Latte art coffee" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text -->
+                <div class="reveal">
+                    <span class="text-boss-sage text-sm font-medium uppercase tracking-widest">Our Story</span>
+                    <h2 class="font-display text-4xl md:text-5xl font-semibold text-boss-dark mt-4 leading-tight">
+                        More Than a Bakery,<br>
+                        <span class="text-boss-green italic">A Sanctuary</span>
+                    </h2>
+                    <p class="mt-6 text-boss-dark/60 text-lg leading-relaxed">
+                        Nestled in the heart of Maadi, Bake Boss is where the aroma of freshly baked goods meets the warmth of community. We're not just a bakery — we're a lounge where you can unwind with a book, catch up with friends, or find your creative flow.
+                    </p>
+                    <p class="mt-4 text-boss-dark/60 text-lg leading-relaxed">
+                        Every item on our menu is crafted with premium ingredients, baked fresh throughout the day, and served with the care that only a neighborhood bakery can offer.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-5 mt-10">
+                        <div class="group relative p-6 rounded-2xl bg-gradient-to-br from-boss-green/5 to-boss-green/10 border border-boss-green/10 overflow-hidden hover:border-boss-green/20 transition-all duration-300">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-boss-green/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div class="w-10 h-10 rounded-xl bg-boss-green/10 flex items-center justify-center mb-4">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                            </div>
+                            <h4 class="font-display text-lg font-semibold text-boss-dark">Fresh Daily</h4>
+                            <p class="text-sm text-boss-dark/50 mt-1.5 leading-relaxed">Baked throughout the day, never yesterday's</p>
+                        </div>
+                        <div class="group relative p-6 rounded-2xl bg-gradient-to-br from-boss-green/5 to-boss-green/10 border border-boss-green/10 overflow-hidden hover:border-boss-green/20 transition-all duration-300">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-boss-green/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div class="w-10 h-10 rounded-xl bg-boss-green/10 flex items-center justify-center mb-4">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                            </div>
+                            <h4 class="font-display text-lg font-semibold text-boss-dark">Specialty Coffee</h4>
+                            <p class="text-sm text-boss-dark/50 mt-1.5 leading-relaxed">Expertly pulled espresso & smooth flat whites</p>
+                        </div>
+                        <div class="group relative p-6 rounded-2xl bg-gradient-to-br from-boss-green/5 to-boss-green/10 border border-boss-green/10 overflow-hidden hover:border-boss-green/20 transition-all duration-300">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-boss-green/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div class="w-10 h-10 rounded-xl bg-boss-green/10 flex items-center justify-center mb-4">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            </div>
+                            <h4 class="font-display text-lg font-semibold text-boss-dark">Cozy Lounge</h4>
+                            <p class="text-sm text-boss-dark/50 mt-1.5 leading-relaxed">A warm space to unwind, meet friends, or just be</p>
+                        </div>
+                        <div class="group relative p-6 rounded-2xl bg-gradient-to-br from-boss-green/5 to-boss-green/10 border border-boss-green/10 overflow-hidden hover:border-boss-green/20 transition-all duration-300">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-boss-green/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+                            <div class="w-10 h-10 rounded-xl bg-boss-green/10 flex items-center justify-center mb-4">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </div>
+                            <h4 class="font-display text-lg font-semibold text-boss-dark">Work-Friendly</h4>
+                            <p class="text-sm text-boss-dark/50 mt-1.5 leading-relaxed">WiFi, good vibes, and your next remote office</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-24 md:py-32 bg-boss-green relative overflow-hidden">
+        <!-- Decorative -->
+        <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/5 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-white/3 blur-2xl"></div>
+
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="text-center reveal">
+                <span class="text-boss-mint text-sm font-medium uppercase tracking-widest">Order Online</span>
+                <h2 class="font-display text-4xl md:text-6xl font-semibold text-boss-cream mt-4 leading-tight">
+                    Fresh. Warm. <span class="italic">Everyday.</span>
+                </h2>
+                <p class="mt-6 text-boss-cream/60 text-lg max-w-lg mx-auto">
+                    Croissants, focaccia, pizza, desserts, specialty coffee — browse our full menu and order directly.
+                </p>
+                <a href="menu.html" class="inline-flex items-center gap-3 mt-10 px-10 py-5 bg-boss-cream text-boss-green rounded-full font-semibold text-lg hover:bg-white shadow-lg shadow-black/10 hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-boss-cream focus-visible:outline-offset-2" style="transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    View Menu & Order
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hours & Location -->
+    <section class="py-24 md:py-32 relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid lg:grid-cols-3 gap-8 reveal">
+                <!-- Hours -->
+                <div class="p-8 rounded-3xl bg-boss-warm border border-boss-green/5">
+                    <div class="w-12 h-12 rounded-full bg-boss-green/10 flex items-center justify-center mb-6">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-boss-dark">Opening Hours</h3>
+                    <div class="mt-4 space-y-3">
+                        <div class="flex justify-between text-boss-dark/60">
+                            <span>Sun — Thu</span>
+                            <span class="font-medium text-boss-dark">7AM — 11PM</span>
+                        </div>
+                        <div class="w-full h-px bg-boss-green/5"></div>
+                        <div class="flex justify-between text-boss-dark/60">
+                            <span>Fri — Sat</span>
+                            <span class="font-medium text-boss-dark">8AM — 12AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div class="p-8 rounded-3xl bg-boss-warm border border-boss-green/5">
+                    <div class="w-12 h-12 rounded-full bg-boss-green/10 flex items-center justify-center mb-6">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-boss-dark">Find Us</h3>
+                    <p class="mt-4 text-boss-dark/60 leading-relaxed">
+                        15 Street 257,<br>
+                        Ezbet Fahmy, Maadi,<br>
+                        Cairo, Egypt
+                    </p>
+                    <a href="https://maps.google.com/?q=15+Street+257+Maadi+Cairo+Egypt" target="_blank" class="inline-flex items-center gap-2 mt-4 text-boss-green font-medium text-sm hover:underline">
+                        Get Directions
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="7" y1="17" x2="17" y2="7"/>
+                            <polyline points="7 7 17 7 17 17"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <!-- Contact -->
+                <div class="p-8 rounded-3xl bg-boss-warm border border-boss-green/5">
+                    <div class="w-12 h-12 rounded-full bg-boss-green/10 flex items-center justify-center mb-6">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D5016" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-display text-2xl font-semibold text-boss-dark">Get in Touch</h3>
+                    <div class="mt-4 space-y-3">
+                        <a href="tel:+201000990001" class="block text-boss-dark/60 hover:text-boss-green transition-colors">
+                            +20 10 00990001
+                        </a>
+                        <a href="https://www.instagram.com/bakeboss.eg/" target="_blank" class="block text-boss-dark/60 hover:text-boss-green transition-colors">
+                            @bakeboss.eg
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / CTA Section -->
+    <section id="contact" class="py-24 md:py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-boss-cream via-boss-warm to-boss-cream"></div>
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="max-w-3xl mx-auto text-center reveal">
+                <h2 class="font-display text-4xl md:text-6xl font-semibold text-boss-dark leading-tight">
+                    Come Visit<br>
+                    <span class="text-boss-green italic">Your Happy Place</span>
+                </h2>
+                <p class="mt-6 text-boss-dark/60 text-lg max-w-lg mx-auto leading-relaxed">
+                    Whether it's your morning coffee ritual, a lunch break treat, or an evening unwind — there's always a warm seat waiting for you at Bake Boss.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mt-10">
+                    <a href="tel:+201000990001" class="btn-primary text-lg px-10">Call Us</a>
+                    <a href="https://www.instagram.com/bakeboss.eg/" target="_blank" class="btn-outline text-lg px-10">Follow on Instagram</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-boss-green/5">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full overflow-hidden bg-boss-green">
+                        <img src="brand_assets/BakeBossLogo.jpg" alt="Bake Boss" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-display text-xl font-semibold text-boss-green">Bake Boss</span>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex items-center gap-6">
+                    <a href="https://www.instagram.com/bakeboss.eg/" target="_blank" class="group" aria-label="Instagram">
+                        <div class="w-10 h-10 rounded-full border border-boss-green/10 flex items-center justify-center group-hover:bg-boss-green group-hover:border-boss-green transition-all duration-300">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-boss-green group-hover:text-boss-cream transition-colors">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </div>
+                    </a>
+                    <a href="https://www.facebook.com/BakeBoss.eg" target="_blank" class="group" aria-label="Facebook">
+                        <div class="w-10 h-10 rounded-full border border-boss-green/10 flex items-center justify-center group-hover:bg-boss-green group-hover:border-boss-green transition-all duration-300">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-boss-green group-hover:text-boss-cream transition-colors">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                            </svg>
+                        </div>
+                    </a>
+                    <a href="https://www.tiktok.com/@bakeboss.eg" target="_blank" class="group" aria-label="TikTok">
+                        <div class="w-10 h-10 rounded-full border border-boss-green/10 flex items-center justify-center group-hover:bg-boss-green group-hover:border-boss-green transition-all duration-300">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-boss-green group-hover:text-boss-cream transition-colors">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.88 2.89 2.89 0 0 1-2.88-2.88 2.89 2.89 0 0 1 2.88-2.88c.28 0 .56.04.82.11v-3.5a6.37 6.37 0 0 0-.82-.05A6.34 6.34 0 0 0 3.15 15.7 6.34 6.34 0 0 0 9.49 22a6.34 6.34 0 0 0 6.34-6.34V9.16a8.16 8.16 0 0 0 4.76 1.53v-3.5a4.85 4.85 0 0 1-1-.5z"/>
+                            </svg>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Copyright -->
+                <p class="text-sm text-boss-dark/40">
+                    &copy; 2024 Bake Boss. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll-based card animation
+        const scrollCard = document.querySelector('.scroll-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const rect = entry.boundingClientRect;
+                    const viewHeight = window.innerHeight;
+                    const progress = Math.min(1, Math.max(0, 1 - (rect.top / viewHeight)));
+                    scrollCard.style.transform = `perspective(1000px) rotateX(${12 * (1 - progress)}deg) scale(${0.95 + 0.05 * progress})`;
+                }
+            });
+        }, { threshold: Array.from({length: 20}, (_, i) => i / 19) });
+        observer.observe(scrollCard);
+
+        // Continuous scroll update for smoother animation
+        window.addEventListener('scroll', () => {
+            const rect = scrollCard.getBoundingClientRect();
+            const viewHeight = window.innerHeight;
+            const progress = Math.min(1, Math.max(0, 1 - (rect.top / (viewHeight * 0.8))));
+            const rotateX = 12 * (1 - progress);
+            const scale = 0.95 + 0.05 * progress;
+            scrollCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) scale(${scale})`;
+        }, { passive: true });
+
+        // Reveal on scroll
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        reveals.forEach(el => revealObserver.observe(el));
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const bar1 = document.getElementById('bar1');
+        const bar2 = document.getElementById('bar2');
+        const bar3 = document.getElementById('bar3');
+        let menuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle('open', menuOpen);
+            if (menuOpen) {
+                bar1.style.transform = 'rotate(45deg) translate(4px, 4px)';
+                bar2.style.opacity = '0';
+                bar3.style.transform = 'rotate(-45deg) translate(3px, -3px)';
+                bar3.style.width = '1.5rem';
+            } else {
+                bar1.style.transform = '';
+                bar2.style.opacity = '1';
+                bar3.style.transform = '';
+                bar3.style.width = '1rem';
+            }
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.remove('open');
+                bar1.style.transform = '';
+                bar2.style.opacity = '1';
+                bar3.style.transform = '';
+                bar3.style.width = '1rem';
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Nav background on scroll
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 4px 30px rgba(45, 80, 22, 0.05)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>

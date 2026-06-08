@@ -1,0 +1,9 @@
+node_modules
+temporary screenshots
+test-cart.mjs
+screenshot.mjs
+serve.mjs
+package.json
+package-lock.json
+claude.md
+.vercelignore
