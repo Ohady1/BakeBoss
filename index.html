@@ -327,6 +327,11 @@
         .marquee-track {
             animation: marquee 30s linear infinite;
         }
+        @media (max-width: 768px) {
+            .marquee-track {
+                animation-duration: 14s;
+            }
+        }
         @keyframes marquee {
             from { transform: translateX(0); }
             to { transform: translateX(-50%); }
