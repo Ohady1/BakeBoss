@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -52,11 +51,11 @@
         }
 
         .menu-item {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
         .menu-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(45, 80, 22, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(45, 80, 22, 0.1), 0 4px 12px rgba(45, 80, 22, 0.06);
         }
 
         .cart-badge {
@@ -121,6 +120,16 @@
             50% { transform: scale(1.3); background: #2D5016; color: #FDFAF6; }
             100% { transform: scale(1); }
         }
+
+        .item-image {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .menu-item:hover .item-image {
+            transform: scale(1.05);
+        }
+
+        .category-scroll::-webkit-scrollbar { height: 0; }
+        .category-scroll { scrollbar-width: none; }
     </style>
 </head>
 <body>
@@ -159,24 +168,30 @@
     </header>
 
     <!-- Category Filter -->
-    <div class="sticky top-[73px] z-30 bg-boss-cream/95 backdrop-blur-sm border-b border-boss-green/5 py-3 overflow-x-auto">
-        <div class="max-w-7xl mx-auto px-4 md:px-8 flex gap-2 min-w-max">
-            <button class="category-btn active px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="all">All</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="bakery">Bakery</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="breakfast">Breakfast</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="sandwiches">Sandwiches</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="pizza">Pizza</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="salads">Salads</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="desserts">Desserts</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="coffee">Coffee</button>
-            <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="beverages">Beverages</button>
+    <div class="sticky top-[73px] z-30 bg-boss-cream/95 backdrop-blur-sm border-b border-boss-green/5 py-3">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 overflow-x-auto category-scroll">
+            <div class="flex gap-2 min-w-max">
+                <button class="category-btn active px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="all">All</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="croissant">Croissant</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="pastries">Pastries</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="breakfast">Breakfast</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="sandwiches">Sandwiches</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="focaccia">Focaccia</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="pizza">Pizza</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="salads">Salads</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="desserts">Desserts</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="coffee">Coffee</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="iced-coffee">Iced Coffee</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="frappe">Frappe</button>
+                <button class="category-btn px-4 py-2 rounded-full text-sm font-medium border border-boss-green/10" data-category="beverages">Beverages</button>
+            </div>
         </div>
     </div>
 
     <!-- Menu Content -->
     <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-24">
         <p id="noResults" class="hidden text-center text-boss-dark/40 py-12">No items found</p>
-        <div id="menuContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="menuContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         </div>
     </main>
 
@@ -244,117 +259,133 @@
 
     <script>
     const MENU_DATA = [
-        { id: 0, name: "Flat Plain Croissant", price: 70, category: "bakery" },
-        { id: 1, name: "Plain Croissant", price: 70, category: "bakery" },
-        { id: 2, name: "Kiri Cheese Croissant", price: 95, category: "bakery" },
-        { id: 3, name: "Pastrami Croissant", price: 95, category: "bakery" },
-        { id: 4, name: "Almond Croissant", price: 110, category: "bakery" },
-        { id: 5, name: "Pistachio Croissant", price: 110, category: "bakery" },
-        { id: 6, name: "Chocolate Croissant", price: 110, category: "bakery" },
-        { id: 7, name: "Konafa Pistachio Croissant", price: 120, category: "bakery" },
-        { id: 8, name: "Hotdog Pate", price: 95, category: "bakery" },
-        { id: 9, name: "Kiri & Basterma Pate", price: 95, category: "bakery" },
-        { id: 10, name: "Labneh & Oregano Pate", price: 95, category: "bakery" },
-        { id: 11, name: "Hotdog Flat Bread", price: 75, category: "bakery" },
-        { id: 12, name: "Chicken Ranch Flat Bread", price: 75, category: "bakery" },
-        { id: 13, name: "Chocolate Doughnut", price: 80, category: "bakery" },
-        { id: 14, name: "Strawberry Doughnut", price: 80, category: "bakery" },
-        { id: 15, name: "Feteer Meshaltet", price: 500, category: "bakery" },
-        { id: 16, name: "Extra Eshta", price: 100, category: "bakery" },
+        // === CROISSANT ===
+        { id: 0, name: "Flat Plain Croissant", price: 70, category: "croissant", desc: "Light and flaky flat croissant, freshly baked", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_Plain_Croissant_638571569815415198.jpg?width=400&height=400" },
+        { id: 1, name: "Plain Croissant", price: 70, category: "croissant", desc: "Classic buttery croissant without any toppings", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_Plain_Croissant_638571569815415198.jpg?width=400&height=400" },
+        { id: 2, name: "Kiri Cheese Croissant", price: 95, category: "croissant", desc: "Croissant stuffed with creamy Kiri cheese", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_Kiri_croissant__638571569803016884.jpg?width=400&height=400" },
+        { id: 3, name: "Pastrami Croissant", price: 95, category: "croissant", desc: "Flaky croissant filled with savory pastrami", image: null },
+        { id: 4, name: "Almond Croissant", price: 110, category: "croissant", desc: "Croissant with almond flour paste filling", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_almond_pasta_cro638571569822074674.jpg?width=400&height=400" },
+        { id: 5, name: "Pistachio Croissant", price: 110, category: "croissant", desc: "Croissant with pistachio pieces and sauce", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_Pistachio_Croiss638571569811790624.jpg?width=400&height=400" },
+        { id: 6, name: "Chocolate Croissant", price: 110, category: "croissant", desc: "Croissant stuffed with rich chocolate", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_chocolate_croiss638571569819129413.jpg?width=400&height=400" },
+        { id: 7, name: "Konafa Pistachio Croissant", price: 120, category: "croissant", desc: "Croissant filled with konafa, pistachio and topped with chocolate", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638711679689688620?width=400&height=400" },
 
-        { id: 17, name: "Classic Omelette", price: 225, category: "breakfast" },
-        { id: 18, name: "Familia Mushroom Omelette", price: 250, category: "breakfast" },
-        { id: 19, name: "Mixed Cheese Omelette", price: 250, category: "breakfast" },
-        { id: 20, name: "Beef Bacon Omelette", price: 275, category: "breakfast" },
-        { id: 21, name: "Classic Scrambled", price: 225, category: "breakfast" },
-        { id: 22, name: "Pastrami Scrambled", price: 250, category: "breakfast" },
-        { id: 23, name: "Croissant With Guacamole", price: 250, category: "breakfast" },
-        { id: 24, name: "Caprese & Creamy Cheese Benedict", price: 300, category: "breakfast" },
-        { id: 25, name: "Salmon With Lemon Hollandaise", price: 375, category: "breakfast" },
-        { id: 26, name: "Caprese Sourdough", price: 225, category: "breakfast" },
-        { id: 27, name: "Goakamoli & Cheese Sourdough", price: 225, category: "breakfast" },
-        { id: 28, name: "Mascarpone Olives Sourdough", price: 225, category: "breakfast" },
-        { id: 29, name: "Salmon Gravlax Sourdough", price: 300, category: "breakfast" },
+        // === PASTRIES (Doughnut, Pate, Flat Bread, Feteer) ===
+        { id: 8, name: "Hotdog Pate", price: 95, category: "pastries", desc: "Puff pastry filled with savory hotdog", image: null },
+        { id: 9, name: "Kiri & Basterma Pate", price: 95, category: "pastries", desc: "Pate stuffed with Kiri cheese and pastrami", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_kiri_and_basterm638571569803543952.jpg?width=400&height=400" },
+        { id: 10, name: "Labneh & Oregano Pate", price: 95, category: "pastries", desc: "Pate filled with creamy labneh and aromatic oregano", image: null },
+        { id: 11, name: "Hotdog Flat Bread", price: 75, category: "pastries", desc: "Flat bread wrapped around a juicy hotdog", image: null },
+        { id: 12, name: "Chicken Ranch Flat Bread", price: 75, category: "pastries", desc: "Flat bread with seasoned chicken and ranch dressing", image: null },
+        { id: 13, name: "Chocolate Doughnut", price: 80, category: "pastries", desc: "Stuffed with homemade chocolate, topped with cinnamon powder and sugar", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/1389948e-42ae-4a99-97a0-9ece9dcb3986.jpg?width=400&height=400" },
+        { id: 14, name: "Strawberry Doughnut", price: 80, category: "pastries", desc: "Soft fluffy doughnut stuffed with strawberry jam, topped with whipped cream", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/28736aab-31b7-4682-b279-22aa33b2c7f5.jpg?width=400&height=400" },
+        { id: 15, name: "Feteer Meshaltet", price: 500, category: "pastries", desc: "Traditional Egyptian layered pastry, flaky and buttery", image: null },
+        { id: 16, name: "Extra Eshta", price: 100, category: "pastries", desc: "Extra portion of rich clotted cream", image: null },
 
-        { id: 30, name: "Cheese With Sun-dried Tomato", price: 110, category: "sandwiches" },
-        { id: 31, name: "Tuna Sandwich", price: 160, category: "sandwiches" },
-        { id: 32, name: "Turkey Sandwich", price: 180, category: "sandwiches" },
-        { id: 33, name: "Roast Beef Sandwich", price: 180, category: "sandwiches" },
-        { id: 34, name: "Salmon Sandwich", price: 225, category: "sandwiches" },
-        { id: 35, name: "Halloumi Focaccia", price: 180, category: "sandwiches" },
-        { id: 36, name: "Chicken Focaccia", price: 180, category: "sandwiches" },
-        { id: 37, name: "Roast Beef Focaccia", price: 180, category: "sandwiches" },
+        // === BREAKFAST ===
+        { id: 17, name: "Classic Omelette", price: 225, category: "breakfast", desc: "Fluffy classic omelette with fresh herbs", image: null },
+        { id: 18, name: "Familia Mushroom Omelette", price: 250, category: "breakfast", desc: "Omelette filled with sautéed mushrooms", image: null },
+        { id: 19, name: "Mixed Cheese Omelette", price: 250, category: "breakfast", desc: "Omelette with a blend of premium cheeses", image: null },
+        { id: 20, name: "Beef Bacon Omelette", price: 275, category: "breakfast", desc: "Omelette with crispy beef bacon", image: null },
+        { id: 21, name: "Classic Scrambled", price: 225, category: "breakfast", desc: "Creamy scrambled eggs cooked to perfection", image: null },
+        { id: 22, name: "Pastrami Scrambled", price: 250, category: "breakfast", desc: "Scrambled eggs with savory pastrami slices", image: null },
+        { id: 23, name: "Croissant With Guacamole", price: 250, category: "breakfast", desc: "Fresh croissant served with house-made guacamole", image: null },
+        { id: 24, name: "Caprese & Creamy Cheese Benedict", price: 300, category: "breakfast", desc: "Eggs benedict with caprese and creamy cheese sauce", image: null },
+        { id: 25, name: "Salmon With Lemon Hollandaise", price: 375, category: "breakfast", desc: "Smoked salmon benedict with lemon hollandaise", image: null },
+        { id: 26, name: "Caprese Sourdough", price: 225, category: "breakfast", desc: "Sourdough toast with fresh mozzarella, tomato and basil", image: null },
+        { id: 27, name: "Guacamole & Cheese Sourdough", price: 225, category: "breakfast", desc: "Sourdough with fresh guacamole and melted cheese", image: null },
+        { id: 28, name: "Mascarpone Olives Sourdough", price: 225, category: "breakfast", desc: "Sourdough topped with mascarpone and mixed olives", image: null },
+        { id: 29, name: "Salmon Gravlax Sourdough", price: 300, category: "breakfast", desc: "Premium sourdough with house-cured salmon gravlax", image: null },
 
-        { id: 38, name: "Margarita Pizza", price: 250, category: "pizza" },
-        { id: 39, name: "Salami Pizza", price: 275, category: "pizza" },
-        { id: 40, name: "Pesto Pizza", price: 275, category: "pizza" },
-        { id: 41, name: "Quattro Formaggi Pizza", price: 275, category: "pizza" },
-        { id: 42, name: "Bresaola Pizza", price: 350, category: "pizza" },
-        { id: 43, name: "Truffle Mushroom Pizza", price: 350, category: "pizza" },
+        // === SANDWICHES ===
+        { id: 30, name: "Cheese With Sun-dried Tomato", price: 110, category: "sandwiches", desc: "Sandwich with cheese and tangy sun-dried tomatoes", image: null },
+        { id: 31, name: "Tuna Sandwich", price: 160, category: "sandwiches", desc: "Classic tuna sandwich with fresh vegetables", image: null },
+        { id: 32, name: "Turkey Sandwich", price: 180, category: "sandwiches", desc: "Sliced turkey sandwich with fresh greens", image: null },
+        { id: 33, name: "Roast Beef Sandwich", price: 180, category: "sandwiches", desc: "Roast beef with sun-dried tomatoes and mayonnaise", image: "https://images.deliveryhero.io/image/talabat/MenuItems/roastbeef_sandwitch1638365940614096365.jpg?width=400&height=400" },
+        { id: 34, name: "Salmon Sandwich", price: 225, category: "sandwiches", desc: "Smoked salmon with special sauce and capers", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_Salmon_sandwich_638579294673572192.jpg?width=400&height=400" },
 
-        { id: 44, name: "Strawberry & Spinach Salad", price: 225, category: "salads" },
-        { id: 45, name: "Quinoa Tabbouleh", price: 225, category: "salads" },
-        { id: 46, name: "Chicken Caesar Salad", price: 225, category: "salads" },
-        { id: 47, name: "Buffalo Greens Salad", price: 250, category: "salads" },
-        { id: 48, name: "Bresaola Salad", price: 250, category: "salads" },
+        // === FOCACCIA ===
+        { id: 35, name: "Halloumi Focaccia", price: 180, category: "focaccia", desc: "Oven-fresh focaccia with grilled halloumi, pesto, fresh tomatoes and baby rocca", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/aa6f172b-398c-455a-904f-fbf3fdb5bc73.jpg?width=400&height=400" },
+        { id: 36, name: "Chicken Focaccia", price: 180, category: "focaccia", desc: "Freshly baked focaccia with marinated chicken and garlic cheese spread", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/4d37e6fd-376c-44d7-8b9a-ffc9f11261cd.jpg?width=400&height=400" },
+        { id: 37, name: "Roast Beef Focaccia", price: 180, category: "focaccia", desc: "Soft focaccia with premium roast beef, sun-dried tomatoes and pesto", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/506d7841-db5d-427b-9ceb-f887f040dca7.jpg?width=400&height=400" },
 
-        { id: 49, name: "Brownies", price: 90, category: "desserts" },
-        { id: 50, name: "Lemon Cake", price: 75, category: "desserts" },
-        { id: 51, name: "Honey Cake", price: 110, category: "desserts" },
-        { id: 52, name: "Strawberry Cake", price: 110, category: "desserts" },
-        { id: 53, name: "Red Velvet Cake", price: 110, category: "desserts" },
-        { id: 54, name: "Chocolate Raspberry Cake", price: 110, category: "desserts" },
-        { id: 55, name: "Plain Cheese Cake", price: 110, category: "desserts" },
-        { id: 56, name: "Tres Leches — Piece", price: 125, category: "desserts" },
-        { id: 57, name: "Tres Leches — Box", price: 750, category: "desserts" },
-        { id: 58, name: "Classic Pancake", price: 225, category: "desserts" },
-        { id: 59, name: "Caramel Pecan Pancake", price: 275, category: "desserts" },
-        { id: 60, name: "Kunafa Pistachio Pancake", price: 275, category: "desserts" },
-        { id: 61, name: "Caramel Eclair", price: 80, category: "desserts" },
-        { id: 62, name: "Chocolate Eclair", price: 95, category: "desserts" },
-        { id: 63, name: "Almond Eclair", price: 110, category: "desserts" },
-        { id: 64, name: "Dates Tart", price: 95, category: "desserts" },
-        { id: 65, name: "Seasonal Tart", price: 95, category: "desserts" },
-        { id: 66, name: "Pastry Cream & Mix Berries Tart", price: 120, category: "desserts" },
-        { id: 67, name: "Croissmisu", price: 150, category: "desserts" },
+        // === PIZZA ===
+        { id: 38, name: "Margarita Pizza", price: 250, category: "pizza", desc: "Classic margherita with fresh mozzarella and basil", image: null },
+        { id: 39, name: "Salami Pizza", price: 275, category: "pizza", desc: "Pizza topped with premium salami slices", image: null },
+        { id: 40, name: "Pesto Pizza", price: 275, category: "pizza", desc: "Pizza with aromatic pesto sauce and fresh toppings", image: null },
+        { id: 41, name: "Quattro Formaggi Pizza", price: 275, category: "pizza", desc: "Four cheese pizza with a rich, creamy blend", image: null },
+        { id: 42, name: "Bresaola Pizza", price: 350, category: "pizza", desc: "Pizza topped with premium bresaola and rocket", image: null },
+        { id: 43, name: "Truffle Mushroom Pizza", price: 350, category: "pizza", desc: "Mushroom pizza finished with truffle oil", image: null },
 
-        { id: 68, name: "Turkish Coffee Single", price: 60, category: "coffee" },
-        { id: 69, name: "Turkish Coffee Double", price: 75, category: "coffee" },
-        { id: 70, name: "Espresso Single", price: 60, category: "coffee" },
-        { id: 71, name: "Espresso Double", price: 75, category: "coffee" },
-        { id: 72, name: "American Coffee", price: 90, category: "coffee" },
-        { id: 73, name: "Macchiato", price: 75, category: "coffee" },
-        { id: 74, name: "Double Macchiato", price: 90, category: "coffee" },
-        { id: 75, name: "Latte", price: 100, category: "coffee" },
-        { id: 76, name: "Hot Spanish Latte", price: 110, category: "coffee" },
-        { id: 77, name: "Cappuccino", price: 110, category: "coffee" },
-        { id: 78, name: "Flat White", price: 110, category: "coffee" },
-        { id: 79, name: "Mocha", price: 110, category: "coffee" },
-        { id: 80, name: "White Mocha", price: 120, category: "coffee" },
-        { id: 81, name: "Iced Americano", price: 90, category: "coffee" },
-        { id: 82, name: "Iced Latte", price: 115, category: "coffee" },
-        { id: 83, name: "Iced Spanish Latte", price: 125, category: "coffee" },
-        { id: 84, name: "Latte Frappe", price: 125, category: "coffee" },
-        { id: 85, name: "Vanilla Frappe", price: 130, category: "coffee" },
-        { id: 86, name: "Mocha Frappe", price: 130, category: "coffee" },
-        { id: 87, name: "Caramel Frappe", price: 130, category: "coffee" },
-        { id: 88, name: "Hazelnut Frappe", price: 130, category: "coffee" },
-        { id: 89, name: "Salted Caramel Frappe", price: 130, category: "coffee" },
+        // === SALADS ===
+        { id: 44, name: "Strawberry & Spinach Salad", price: 225, category: "salads", desc: "Fresh spinach with sweet strawberries and light dressing", image: null },
+        { id: 45, name: "Quinoa Tabbouleh", price: 225, category: "salads", desc: "Healthy quinoa tabbouleh with fresh herbs", image: null },
+        { id: 46, name: "Chicken Caesar Salad", price: 225, category: "salads", desc: "Crisp lettuce with Caesar dressing, parmesan and golden croutons", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/2716541516/a7ae4fa5-5b5a-4dd7-9f49-9773ffa14de5.jpg?width=400&height=400" },
+        { id: 47, name: "Buffalo Greens Salad", price: 250, category: "salads", desc: "Mixed greens with buffalo cheese, sun-dried tomatoes and olive oil dressing", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/2858010789/3e1791a2-01e0-4b26-a951-f3d3f2a53644.jpg?width=400&height=400" },
+        { id: 48, name: "Bresaola Salad", price: 250, category: "salads", desc: "Rocca and lettuce with bresaola, parmesan and balsamic honey dressing", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/f16e4b2f-fdf3-4efa-a4e3-9aca92aa8308.jpg?width=400&height=400" },
 
-        { id: 90, name: "Anise", price: 50, category: "beverages" },
-        { id: 91, name: "Tea", price: 50, category: "beverages" },
-        { id: 92, name: "Green Tea", price: 50, category: "beverages" },
-        { id: 93, name: "Hot Apple Cider", price: 110, category: "beverages" },
-        { id: 94, name: "Hot Chocolate", price: 110, category: "beverages" },
-        { id: 95, name: "Pina Colada", price: 125, category: "beverages" },
-        { id: 96, name: "Iced Chocolate", price: 125, category: "beverages" },
-        { id: 97, name: "Mojito — Classic", price: 125, category: "beverages" },
-        { id: 98, name: "Mojito — Mix Berry", price: 130, category: "beverages" },
-        { id: 99, name: "Mojito — Passion Fruit", price: 130, category: "beverages" },
-        { id: 100, name: "Mango Juice", price: 90, category: "beverages" },
-        { id: 101, name: "Orange Juice", price: 90, category: "beverages" },
-        { id: 102, name: "Guava Juice", price: 90, category: "beverages" },
-        { id: 103, name: "Lemon Mint Juice", price: 90, category: "beverages" },
+        // === DESSERTS ===
+        { id: 49, name: "Brownies", price: 90, category: "desserts", desc: "Rich and fudgy chocolate squares", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638484542832671014?width=400&height=400" },
+        { id: 50, name: "Lemon Cake", price: 75, category: "desserts", desc: "Light and zesty lemon flavored cake slice", image: "https://images.deliveryhero.io/image/talabat/MenuItems/lemon_cake638365969320589626.jpg?width=400&height=400" },
+        { id: 51, name: "Honey Cake", price: 110, category: "desserts", desc: "Moist cake with natural honey glaze", image: null },
+        { id: 52, name: "Strawberry Cake", price: 110, category: "desserts", desc: "Soft sponge cake with fresh strawberry layers", image: null },
+        { id: 53, name: "Red Velvet Cake", price: 110, category: "desserts", desc: "Classic red velvet with cream cheese frosting", image: null },
+        { id: 54, name: "Chocolate Raspberry Cake", price: 110, category: "desserts", desc: "Chocolate fudge layered with chocolate cream and raspberry puree", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/cf08a263-945c-4833-aa95-00683f029563.jpg?width=400&height=400" },
+        { id: 55, name: "Plain Cheese Cake", price: 110, category: "desserts", desc: "Creamy New York style cheesecake", image: null },
+        { id: 56, name: "Tres Leches — Piece", price: 125, category: "desserts", desc: "Moist three-milk soaked cake slice", image: null },
+        { id: 57, name: "Tres Leches — Box", price: 750, category: "desserts", desc: "Full box of our signature tres leches cake", image: null },
+        { id: 58, name: "Classic Pancake", price: 225, category: "desserts", desc: "Fluffy pancakes with maple syrup and butter", image: null },
+        { id: 59, name: "Caramel Pecan Pancake", price: 275, category: "desserts", desc: "Pancakes drizzled with caramel and toasted pecans", image: null },
+        { id: 60, name: "Kunafa Pistachio Pancake", price: 275, category: "desserts", desc: "Pancakes with crispy kunafa and pistachio topping", image: null },
+        { id: 61, name: "Caramel Eclair", price: 80, category: "desserts", desc: "Pastry filled with smooth cream, topped with rich caramel glaze", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/5848cd70-c420-4f47-843e-ea7437cab977.jpg?width=400&height=400" },
+        { id: 62, name: "Chocolate Eclair", price: 95, category: "desserts", desc: "Classic eclair with chocolate cream filling and chocolate glaze", image: null },
+        { id: 63, name: "Almond Eclair", price: 110, category: "desserts", desc: "Eclair filled with almond cream and topped with toasted almonds", image: null },
+        { id: 64, name: "Dates Tart", price: 95, category: "desserts", desc: "Tart filled with premium dates paste", image: null },
+        { id: 65, name: "Seasonal Tart", price: 95, category: "desserts", desc: "Tart with seasonal fresh fruits", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/be539f28-795d-4106-825c-3b7efef90965.jpg?width=400&height=400" },
+        { id: 66, name: "Pastry Cream & Mix Berries Tart", price: 120, category: "desserts", desc: "Tart with pastry cream and assorted fresh berries", image: null },
+        { id: 67, name: "Croissmisu", price: 150, category: "desserts", desc: "A fusion of croissant and tiramisu flavors", image: null },
+
+        // === COFFEE ===
+        { id: 68, name: "Turkish Coffee Single", price: 60, category: "coffee", desc: "Traditional single Turkish coffee", image: null },
+        { id: 69, name: "Turkish Coffee Double", price: 75, category: "coffee", desc: "Double portion Turkish coffee", image: null },
+        { id: 70, name: "Espresso Single", price: 60, category: "coffee", desc: "Single shot of rich espresso", image: null },
+        { id: 71, name: "Espresso Double", price: 75, category: "coffee", desc: "Double shot of rich espresso", image: null },
+        { id: 72, name: "American Coffee", price: 90, category: "coffee", desc: "Espresso diluted with hot water", image: null },
+        { id: 73, name: "Macchiato", price: 75, category: "coffee", desc: "Espresso marked with a dash of steamed milk", image: null },
+        { id: 74, name: "Double Macchiato", price: 90, category: "coffee", desc: "Double shot espresso with steamed milk foam", image: null },
+        { id: 75, name: "Latte", price: 100, category: "coffee", desc: "Coffee latte with steamed milk", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_latte_Romel638579293755959398.jpg?width=400&height=400" },
+        { id: 76, name: "Hot Spanish Latte", price: 110, category: "coffee", desc: "Sweet condensed milk latte, Spanish style", image: null },
+        { id: 77, name: "Cappuccino", price: 110, category: "coffee", desc: "Espresso with steamed milk creating a rich, velvety taste", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_cappuccino_Romel638579293839365170.jpg?width=400&height=400" },
+        { id: 78, name: "Flat White", price: 110, category: "coffee", desc: "Double shot espresso with velvety steamed milk", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_flat_white_Romel638579293912589454.jpg?width=400&height=400" },
+        { id: 79, name: "Mocha", price: 110, category: "coffee", desc: "A perfect blend of espresso, chocolate, and milk", image: "https://images.deliveryhero.io/image/talabat/MenuItems/8wqDxZkJCP9qfXr_638430647098499858?width=400&height=400" },
+        { id: 80, name: "White Mocha", price: 120, category: "coffee", desc: "Espresso with white chocolate and steamed milk", image: "https://images.deliveryhero.io/image/talabat/MenuItems/white_mocha638368672191554004.jpg?width=400&height=400" },
+
+        // === ICED COFFEE ===
+        { id: 81, name: "Iced Americano", price: 90, category: "iced-coffee", desc: "Bold espresso poured over ice for a smooth, refreshing coffee", image: "https://images.deliveryhero.io/image/global-menu-service/HF_EG/vendor/718540/product/1085346b-ac81-4ac3-a555-e937732db61b.jpg?width=400&height=400" },
+        { id: 82, name: "Iced Latte", price: 115, category: "iced-coffee", desc: "Smooth espresso with cold milk over ice", image: "https://images.deliveryhero.io/image/talabat/MenuItems/iced_latte638365952384726129.jpg?width=400&height=400" },
+        { id: 83, name: "Iced Spanish Latte", price: 125, category: "iced-coffee", desc: "Iced latte with sweet condensed milk", image: null },
+
+        // === FRAPPE ===
+        { id: 84, name: "Latte Frappe", price: 125, category: "frappe", desc: "Creamy blended latte served chilled", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_latte_frappe_Rom638579293831029861.jpg?width=400&height=400" },
+        { id: 85, name: "Vanilla Frappe", price: 130, category: "frappe", desc: "Creamy cold frappe infused with vanilla flavor", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638484503716927654?width=400&height=400" },
+        { id: 86, name: "Mocha Frappe", price: 130, category: "frappe", desc: "Blend of espresso, chocolate syrup and ice, topped with whipped cream", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_mocha_frappe_Rom638579293876526023.jpg?width=400&height=400" },
+        { id: 87, name: "Caramel Frappe", price: 130, category: "frappe", desc: "Creamy cold frappe with rich caramel flavor", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638484503716927654?width=400&height=400" },
+        { id: 88, name: "Hazelnut Frappe", price: 130, category: "frappe", desc: "Creamy cold frappe with nutty hazelnut flavor", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638484503716927654?width=400&height=400" },
+        { id: 89, name: "Salted Caramel Frappe", price: 130, category: "frappe", desc: "Sweet and salty caramel frappe blend", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638484503716927654?width=400&height=400" },
+
+        // === BEVERAGES (Hot Drinks, Cold Drinks, Fresh Juices) ===
+        { id: 90, name: "Anise", price: 50, category: "beverages", desc: "Traditional warm anise herbal drink", image: null },
+        { id: 91, name: "Tea", price: 50, category: "beverages", desc: "Classic Egyptian black tea", image: null },
+        { id: 92, name: "Green Tea", price: 50, category: "beverages", desc: "Light and refreshing green tea", image: null },
+        { id: 93, name: "Hot Apple Cider", price: 110, category: "beverages", desc: "Hot apple juice with cinnamon sticks and clove", image: "https://images.deliveryhero.io/image/talabat/MenuItems/mmw_638714316902473246?width=400&height=400" },
+        { id: 94, name: "Hot Chocolate", price: 110, category: "beverages", desc: "Rich and creamy hot chocolate drink", image: "https://images.deliveryhero.io/image/talabat/MenuItems/hot_chocolate638365953430190116.jpg?width=400&height=400" },
+        { id: 95, name: "Pina Colada", price: 125, category: "beverages", desc: "Made with juicy pineapples and creamy coconut milk", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_pina_colada_Rome638579293840213844.jpg?width=400&height=400" },
+        { id: 96, name: "Iced Chocolate", price: 125, category: "beverages", desc: "Cold milk with cocoa, topped with whipped cream and chocolate sauce", image: "https://images.deliveryhero.io/image/talabat/MenuItems/Bakeboss_iced_chocolate_R638579293859459968.jpg?width=400&height=400" },
+        { id: 97, name: "Mojito — Classic", price: 125, category: "beverages", desc: "Refreshing classic mojito with fresh mint", image: null },
+        { id: 98, name: "Mojito — Mix Berry", price: 130, category: "beverages", desc: "Mojito blended with mixed berries", image: null },
+        { id: 99, name: "Mojito — Passion Fruit", price: 130, category: "beverages", desc: "Tropical passion fruit mojito", image: null },
+        { id: 100, name: "Mango Juice", price: 90, category: "beverages", desc: "Fresh squeezed mango juice", image: null },
+        { id: 101, name: "Orange Juice", price: 90, category: "beverages", desc: "Freshly squeezed orange juice", image: "https://images.deliveryhero.io/image/talabat/MenuItems/orange638368697465618138.jpg?width=400&height=400" },
+        { id: 102, name: "Guava Juice", price: 90, category: "beverages", desc: "Fresh guava juice", image: null },
+        { id: 103, name: "Lemon Mint Juice", price: 90, category: "beverages", desc: "Refreshing lemon and mint juice blend", image: null },
     ];
 
     let cart = [];
@@ -362,7 +393,6 @@
     let searchQuery = '';
     let toastTimeout = null;
 
-    // Use ID-based lookup instead of string matching
     function getItemById(id) {
         return MENU_DATA.find(item => item.id === id);
     }
@@ -377,9 +407,27 @@
         let items = activeCategory === 'all' ? MENU_DATA : MENU_DATA.filter(i => i.category === activeCategory);
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            items = items.filter(i => i.name.toLowerCase().includes(q));
+            items = items.filter(i => i.name.toLowerCase().includes(q) || (i.desc && i.desc.toLowerCase().includes(q)));
         }
         return items;
+    }
+
+    function getCategoryIcon(category) {
+        const icons = {
+            'croissant': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5c0-3 2.5-6 7.5-6s7.5 3 7.5 6"/><path d="M3 18c1-2 3-3.5 9-3.5s8 1.5 9 3.5"/></svg>',
+            'pastries': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v4m0 8v4M4 12h4m8 0h4"/></svg>',
+            'breakfast': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg>',
+            'sandwiches': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M3 15h18"/><path d="M5 7c0-1 2-3 7-3s7 2 7 3"/><path d="M5 19h14c1 0 2-1 2-2H3c0 1 1 2 2 2z"/></svg>',
+            'focaccia': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="3"/><circle cx="8" cy="12" r="1"/><circle cx="12" cy="10" r="1"/><circle cx="16" cy="12" r="1"/></svg>',
+            'pizza': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 20h16L12 2z"/><circle cx="10" cy="13" r="1.5"/><circle cx="14" cy="16" r="1"/></svg>',
+            'salads': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10"/><path d="M12 21V11"/><path d="M4 11c0-4.4 3.6-8 8-8s8 3.6 8 8"/><path d="M4 11h16"/></svg>',
+            'desserts': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h8l1-5H7l1 5z"/><path d="M6 15c0-3 1.5-5 6-5s6 2 6 5"/><path d="M12 10V6"/><circle cx="12" cy="4" r="2"/></svg>',
+            'coffee': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+            'iced-coffee': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 18H9L8 2z"/><path d="M6 6h12"/><path d="M10 10h4"/></svg>',
+            'frappe': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 18H9L8 2z"/><path d="M12 2v-0"/><circle cx="12" cy="6" r="3"/><path d="M6 6h12"/></svg>',
+            'beverages': '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2h8l-1 18H9L8 2z"/><path d="M6 6h12"/><path d="M7 2l-2 4"/><path d="M17 2l2 4"/></svg>',
+        };
+        return icons[category] || icons['pastries'];
     }
 
     function renderMenu() {
@@ -394,17 +442,33 @@
         }
         noResults.classList.add('hidden');
 
-        container.innerHTML = items.map((item, idx) => `
-            <div class="menu-item bg-white rounded-2xl border border-boss-green/5 p-4 flex items-center justify-between gap-3 animate-in" style="animation-delay: ${Math.min(idx * 20, 200)}ms">
-                <div class="flex-1 min-w-0">
-                    <h3 class="font-medium text-boss-dark text-sm truncate">${escapeHtml(item.name)}</h3>
-                    <span class="text-boss-green font-semibold text-sm">${item.price} EGP</span>
+        container.innerHTML = items.map((item, idx) => {
+            const hasImage = item.image !== null;
+            const imageHtml = hasImage
+                ? `<div class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-boss-warm">
+                       <img src="${item.image}" alt="${escapeHtml(item.name)}" class="item-image w-full h-full object-cover" loading="lazy">
+                   </div>`
+                : `<div class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl bg-gradient-to-br from-boss-green/5 to-boss-green/10 flex items-center justify-center text-boss-green/30">
+                       ${getCategoryIcon(item.category)}
+                   </div>`;
+
+            return `
+            <div class="menu-item bg-white rounded-2xl border border-boss-green/5 p-3 flex gap-4 animate-in" style="animation-delay: ${Math.min(idx * 30, 300)}ms">
+                ${imageHtml}
+                <div class="flex-1 min-w-0 flex flex-col justify-between py-1">
+                    <div>
+                        <h3 class="font-medium text-boss-dark text-[15px] leading-snug">${escapeHtml(item.name)}</h3>
+                        ${item.desc ? `<p class="text-boss-dark/45 text-xs mt-1 line-clamp-2 leading-relaxed">${escapeHtml(item.desc)}</p>` : ''}
+                    </div>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-boss-green font-semibold text-sm">${item.price} EGP</span>
+                        <button data-add-id="${item.id}" class="add-btn shrink-0 w-8 h-8 rounded-full border-2 border-boss-green/20 flex items-center justify-center text-boss-green hover:bg-boss-green hover:text-boss-cream hover:border-boss-green transition-all duration-200 active:scale-90">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                    </div>
                 </div>
-                <button data-add-id="${item.id}" class="add-btn shrink-0 w-9 h-9 rounded-full border-2 border-boss-green/20 flex items-center justify-center text-boss-green hover:bg-boss-green hover:text-boss-cream hover:border-boss-green transition-all duration-200 active:scale-90">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     function addToCart(id) {
@@ -541,7 +605,6 @@
 
         const orderText = 'NEW ORDER — Bake Boss\n\nCustomer: ' + name + '\nPhone: +20' + phone + (notes ? '\nNotes: ' + notes : '') + '\n\n--- ITEMS ---\n' + orderItems + '\n\n--- TOTAL: ' + totalPrice + ' EGP ---';
 
-        // Send via mailto (reliable fallback)
         const subject = encodeURIComponent('New Order from ' + name + ' — Bake Boss');
         const body = encodeURIComponent(orderText);
         window.open('mailto:ohady3355@gmail.com?subject=' + subject + '&body=' + body, '_blank');
@@ -556,18 +619,16 @@
 
     // --- EVENT DELEGATION ---
 
-    // Menu add buttons (delegation on container)
     document.getElementById('menuContainer').addEventListener('click', function(e) {
         const btn = e.target.closest('[data-add-id]');
         if (!btn) return;
         const id = parseInt(btn.dataset.addId);
         addToCart(id);
         btn.classList.remove('add-btn-flash');
-        void btn.offsetWidth; // force reflow
+        void btn.offsetWidth;
         btn.classList.add('add-btn-flash');
     });
 
-    // Cart panel delegation
     document.getElementById('cartPanel').addEventListener('click', function(e) {
         const qtyBtn = e.target.closest('[data-qty-id]');
         if (qtyBtn) {
@@ -584,7 +645,6 @@
         }
     });
 
-    // Category filter
     document.querySelectorAll('.category-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -594,13 +654,11 @@
         });
     });
 
-    // Search
     document.getElementById('searchInput').addEventListener('input', function(e) {
         searchQuery = e.target.value.trim();
         renderMenu();
     });
 
-    // Cart toggle
     document.getElementById('cartToggle').addEventListener('click', openCart);
     document.getElementById('cartOverlay').addEventListener('click', closeCart);
     document.getElementById('closeCartBtn').addEventListener('click', closeCart);
@@ -608,7 +666,6 @@
     document.getElementById('submitBtn').addEventListener('click', submitOrder);
     document.getElementById('backToCartBtn').addEventListener('click', hideCheckout);
 
-    // Init
     renderMenu();
     </script>
 </body>
